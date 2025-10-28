@@ -41,6 +41,7 @@ func main() {
 	var title string
 	var retry = 300
 	var expire = 3600
+	var timeout = 30 * time.Second
 	var printConfig bool
 
 	log.SetFlags(0)
@@ -50,6 +51,7 @@ func main() {
 	flag.StringVar(&title, "title", "", "title to show with message, instead of possible value from config file, or the default: the application name")
 	flag.IntVar(&retry, "retry", retry, "interval between resends of highest priority notifications until they are acknowledged; at most 50 retries are attempted by pushover")
 	flag.IntVar(&retry, "expire", expire, "interval after which highest priority notifications aren't retried anymore")
+	flag.DurationVar(&timeout, "timeout", timeout, "timeout for call to pushover api")
 	flag.Usage = func() {
 		log.Println("usage: pushover [flags] message...")
 		flag.PrintDefaults()
@@ -107,7 +109,7 @@ func main() {
 		data.Set("title", title)
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://api.pushover.net/1/messages.json", strings.NewReader(data.Encode()))
