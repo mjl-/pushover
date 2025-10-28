@@ -82,7 +82,7 @@ func main() {
 		p = "-2"
 	case "low", "-1":
 		p = "-1"
-	case "normal", "0":
+	case "", "normal", "0":
 		p = "0"
 	case "high", "1":
 		p = "1"
